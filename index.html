@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="fi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D-mallien demotuotesivu</title>
+
+  <!-- <model-viewer> (GLB/glTF katseluun) -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 24px; max-width: 1100px; }
+    h1 { margin-bottom: 6px; }
+    p { margin-top: 0; color: #333; line-height: 1.5; }
+    .grid { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 18px; }
+    @media (min-width: 980px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+    .card { border: 1px solid #e6e6e6; border-radius: 14px; padding: 14px; }
+    .card h2 { margin: 0 0 10px 0; font-size: 18px; }
+
+    model-viewer {
+      width: 100%;
+      height: 460px;
+      background: #f6f6f6;
+      border-radius: 12px;
+      display: block;
+    }
+
+    .meta { font-size: 14px; margin-top: 10px; color: #333; }
+    .meta b { display: inline-block; min-width: 120px; }
+
+    .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    button {
+      border: 1px solid #ddd; background: #fff; border-radius: 10px;
+      padding: 8px 10px; cursor: pointer;
+    }
+    button:hover { background: #f3f3f3; }
+  </style>
+</head>
+
+<body>
+  <h1>3D-mallien demotuotesivu</h1>
+  <p>
+    Sivulla esitetään sama tuote kahdella eri tuotantomenetelmällä tuotettuna 3D-mallina (GLB).
+    Katselussa voi pyörittää ja zoomata mallia selaimessa ilman lisäosia.
+  </p>
+
+  <div class="grid">
+    <!-- Manuaalinen -->
+    <section class="card">
+      <h2>Manuaalinen malli (Blender)</h2>
+
+      <model-viewer id="mv-blender"
+        src="models/blender.glb"
+        camera-controls
+        interaction-prompt="none"
+        shadow-intensity="1"
+        ar="false">
+      </model-viewer>
+
+      <div class="row">
+        <button type="button" onclick="resetView('mv-blender')">Reset</button>
+        <button type="button" onclick="toggleAutoRotate('mv-blender')">Auto-rotate</button>
+      </div>
+
+      <div class="meta">
+        <div><b>Tiedostokoko:</b> <span id="size-blender">—</span></div>
+        <div><b>Huomiot:</b> (täydennä myöhemmin)</div>
+      </div>
+    </section>
+
+    <!-- Fotogrammetria -->
+    <section class="card">
+      <h2>Fotogrammetria</h2>
+
+      <model-viewer id="mv-foto"
+        src="models/fotogrammetria.glb"
+        camera-controls
+        interaction-prompt="none"
+        shadow-intensity="1"
+        ar="false">
+      </model-viewer>
+
+      <div class="row">
+        <button type="button" onclick="resetView('mv-foto')">Reset</button>
+        <button type="button" onclick="toggleAutoRotate('mv-foto')">Auto-rotate</button>
+      </div>
+
+      <div class="meta">
+        <div><b>Tiedostokoko:</b> <span id="size-foto">—</span></div>
+        <div><b>Huomiot:</b> (täydennä myöhemmin)</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function resetView(id) {
+      const mv = document.getElementById(id);
+      // Palautetaan kameran oletusasetukset
+      mv.cameraOrbit = mv.getAttribute('camera-orbit') || 'auto auto auto';
+      mv.fieldOfView = mv.getAttribute('field-of-view') || 'auto';
+    }
+
+    function toggleAutoRotate(id) {
+      const mv = document.getElementById(id);
+      mv.autoRotate = !mv.autoRotate;
+    }
+
+    // Näytä tiedostokoot (toimii kun sivu ajetaan http(s) kautta, ei file:// luotettavasti)
+    async function setFileSize(url, elId) {
+      try {
+        const res = await fetch(url, { method: 'HEAD' });
+        const bytes = res.headers.get('content-length');
+        if (!bytes) return;
+        const mb = (Number(bytes) / (1024 * 1024)).toFixed(2);
+        document.getElementById(elId).textContent = `${mb} MB`;
+      } catch (e) {
+        // jätetään hiljaiseksi
+      }
+    }
+
+    setFileSize('models/blender.glb', 'size-blender');
+    setFileSize('models/fotogrammetria.glb', 'size-foto');
+  </script>
+</body>
+</html>
