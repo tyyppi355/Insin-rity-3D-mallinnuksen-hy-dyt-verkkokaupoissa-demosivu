@@ -13,7 +13,7 @@
     h1 { margin-bottom: 6px; }
     p { margin-top: 0; color: #333; line-height: 1.5; }
     .grid { display: grid; grid-template-columns: 1fr; gap: 18px; margin-top: 18px; }
-    @media (min-width: 980px) { .grid { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 1280px) { .grid { grid-template-columns: 1fr 1fr 1fr; } }
 
     .card { border: 1px solid #e6e6e6; border-radius: 14px; padding: 14px; }
     .card h2 { margin: 0 0 10px 0; font-size: 18px; }
@@ -41,8 +41,8 @@
 <body>
   <h1>3D-mallien demotuotesivu</h1>
   <p>
-    Sivulla esitetään sama tuote kahdella eri tuotantomenetelmällä tuotettuna 3D-mallina (GLB).
-    Katselussa voi pyörittää ja zoomata mallia selaimessa ilman lisäosia.
+    Sivulla esitetään sama tuote kolmena GLB-muotoisena 3D-mallina. Kolmas malli on fotogrammetriamallin teksturoimaton versio, 
+    jossa geometria on sama mutta tekstuurit puuttuvat. Katselussa mallia voi pyörittää ja zoomata selaimessa ilman lisäosia.
   </p>
 
   <div class="grid">
@@ -116,6 +116,42 @@
 </div>
 
     </section>
+
+    <!-- Fotogrammetria ilman tekstuureita -->
+<section class="card">
+  <h2>Fotogrammetria ilman tekstuureita</h2>
+
+  <model-viewer id="mv-fotoei"
+    src="models/fotoeitextuureita.glb"
+    camera-controls
+    interaction-prompt="none"
+    shadow-intensity="1"
+    ar="false">
+  </model-viewer>
+
+  <div class="row">
+    <button type="button" onclick="resetView('mv-fotoei')">Reset</button>
+    <button type="button" onclick="toggleAutoRotate('mv-fotoei')">Auto-rotate</button>
+  </div>
+
+  <div class="meta">
+    <div><b>Tiedostokoko:</b> <span id="size-fotoei">—</span></div>
+
+    <div><b>Tekniset tiedot:</b></div>
+    <ul>
+      <li>Trianglet: <span id="tris-fotoei">50,000</span></li>
+      <li>Tekstuurit: <span id="tex-fotoei">—</span></li>
+    </ul>
+
+    <div><b>Huomiot:</b></div>
+    <ul>
+      <li>Visuaalinen informaatio heikkenee, vaikka geometria säilyy.</li>
+      <li>Lataus ja mallin käsittely kevenevät, koska ladattavaa tekstuuridataa ei ole.</li>
+      <li>Tiedostokoko pienenee merkittävästi, kun tekstuurit poistetaan.</li>
+    </ul>
+  </div>
+</section>
+
   </div>
 
   <script>
@@ -146,6 +182,7 @@
 
     setFileSize('models/blender.glb', 'size-blender');
     setFileSize('models/fotogrammetria.glb', 'size-foto');
+    setFileSize('models/fotoeitextuureita.glb', 'size-fotoei');
   </script>
 </body>
 </html>
